@@ -10,13 +10,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	Url "net/url"
 	"os"
 	"strconv"
 	"sync/atomic"
 	"time"
 	"golang.org/x/net/proxy"
-	"math/rand"
+	Random "math/rand"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -131,7 +130,7 @@ func randomSocks5Proxy() (string, string, string) {
 		"sundaydx:silan123@18.163.80.96:32768",
 	}
 
-	p := formats[rand.Intn(len(formats))]
+	p := formats[Random.Intn(len(formats))]
 	_ps := strings.Split(p, "@")
 	_userAndPass := strings.Split(_ps[0], ":")
 	return _ps[1], _userAndPass[0], _userAndPass[1]
