@@ -15,6 +15,9 @@ import (
 	"strconv"
 	"sync/atomic"
 	"time"
+	"golang.org/x/net/proxy"
+	"math/rand"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gorilla/websocket"
@@ -98,6 +101,40 @@ type EV struct {
 	Tags      nostr.Tags      `json:"tags"`
 	Content   string          `json:"content"`
 	PubKey    string          `json:"pubkey"`
+}
+
+func randomSocks5Proxy() (string, string, string) {
+	formats := []string{
+		"sundaydx:silan123@43.198.80.254:32768",
+		"sundaydx:silan123@18.166.30.242:32768",
+		"sundaydx:silan123@18.163.200.238:32768",
+		"sundaydx:silan123@18.163.37.22:32768",
+		"sundaydx:silan123@18.167.166.188:32768",
+		"sundaydx:silan123@16.162.46.180:32768",
+		"sundaydx:silan123@16.162.217.158:32768",
+		"sundaydx:silan123@18.166.178.195:32768",
+		"sundaydx:silan123@16.162.120.87:32768",
+		"sundaydx:silan123@18.166.178.18:32768",
+		"sundaydx:silan123@18.162.110.187:32768",
+		"sundaydx:silan123@18.167.12.53:32768",
+		"sundaydx:silan123@18.162.155.29:32768",
+		"sundaydx:silan123@18.167.37.48:32768",
+		"sundaydx:silan123@16.163.147.66:32768",
+		"sundaydx:silan123@16.162.133.81:32768",
+		"sundaydx:silan123@16.163.141.234:32768",
+		"sundaydx:silan123@18.162.169.229:32768",
+		"sundaydx:silan123@16.163.174.155:32768",
+		"sundaydx:silan123@18.166.64.212:32768",
+		"sundaydx:silan123@43.198.87.60:32768",
+		"sundaydx:silan123@18.163.200.225:32768",
+		"sundaydx:silan123@18.162.123.2:32768",
+		"sundaydx:silan123@18.163.80.96:32768",
+	}
+
+	p := formats[rand.Intn(len(formats))]
+	_ps := strings.Split(p, "@")
+	_userAndPass := strings.Split(_ps[0], ":")
+	return _ps[1], _userAndPass[0], _userAndPass[1]
 }
 
 func mine(ctx context.Context, messageId string, client *ethclient.Client) {
@@ -189,14 +226,20 @@ func mine(ctx context.Context, messageId string, client *ethclient.Client) {
 		req.Header.Set("Sec-fetch-site", "same-site")
 
 		// 发送请求
-		uri, err := Url.Parse("http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:10000")
+		// uri, err := Url.Parse("http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:10000")
+		addr, user, pass := randomSocks5Proxy()
+		dialer, err := proxy.SOCKS5("tcp", addr, &proxy.Auth{
+			User: user,
+			Password: pass,
+		}, proxy.Direct)
 
 		if err != nil {
 			log.Fatalf("Error parsing proxy URL: %v", err)
+			os.Exit(1)
 		}
 		client := &http.Client{
 			Transport: &http.Transport{
-				Proxy: http.ProxyURL(uri),
+				Dial: dialer.Dial,
 			},
 		}
 		resp, err := client.Do(req)
