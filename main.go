@@ -188,7 +188,17 @@ func mine(ctx context.Context, messageId string, client *ethclient.Client) {
 		req.Header.Set("Sec-fetch-site", "same-site")
 
 		// 发送请求
-		client := &http.Client{}
+        _proxy := "http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:22000"
+		uri, err := url.Parse(_proxy)
+
+		if err != nil {
+			log.Fatalf("Error parsing proxy URL: %v", err)
+		}
+		client := &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(uri),
+			}
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Fatalf("Error sending request: %v", err)
@@ -229,8 +239,7 @@ func connectToWSS(url string) (*websocket.Conn, error) {
 	return conn, nil
 }
 
-func main() {
-
+func runOnce() {
 	wssAddr := "wss://report-worker-2.noscription.org"
 	// relayUrl := "wss://relay.noscription.org/"
 	ctx := context.Background()
@@ -306,5 +315,13 @@ func main() {
 	}()
 
 	select {}
+}
 
+func main() {
+
+	for {
+		runOnce()
+		fmt.Println("Restarting...")
+		time.Sleep(time.Duration(5) * time.Second) // 5秒重试间隔
+	}
 }
