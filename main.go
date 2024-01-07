@@ -196,7 +196,7 @@ func mine(ctx context.Context, messageId string, client *ethclient.Client) {
 		client := &http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyURL(uri),
-			}
+			},
 		}
 		resp, err := client.Do(req)
 		if err != nil {
