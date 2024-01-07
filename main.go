@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
+	Url "net/url"
 	"os"
 	"strconv"
 	"sync/atomic"
@@ -189,7 +189,7 @@ func mine(ctx context.Context, messageId string, client *ethclient.Client) {
 		req.Header.Set("Sec-fetch-site", "same-site")
 
 		// 发送请求
-		uri, err := url.Parse("http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:10000")
+		uri, err := Url.Parse("http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:10000")
 
 		if err != nil {
 			log.Fatalf("Error parsing proxy URL: %v", err)
