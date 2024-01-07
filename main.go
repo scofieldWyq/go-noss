@@ -188,8 +188,7 @@ func mine(ctx context.Context, messageId string, client *ethclient.Client) {
 		req.Header.Set("Sec-fetch-site", "same-site")
 
 		// 发送请求
-        _proxy := "http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:22000"
-		uri, err := url.Parse(_proxy)
+		uri, err := url.Parse("http://customer-bloodyfk:ZyzrxT4hXX9B7rC@dc.pr.oxylabs.io:10000")
 
 		if err != nil {
 			log.Fatalf("Error parsing proxy URL: %v", err)
